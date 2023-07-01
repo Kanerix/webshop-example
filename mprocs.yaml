@@ -1,0 +1,4 @@
+procs:
+  trunk: "trunk serve"
+  tailwind: "npx tailwindcss -i ./input.css -o ./style/generated.css --watch"
+  tests: "cargo test"
