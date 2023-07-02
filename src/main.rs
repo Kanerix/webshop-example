@@ -1,10 +1,10 @@
-mod app;
-mod components;
-mod contexts;
-mod pages;
+pub mod app;
+pub mod components;
+pub mod pages;
 
 use app::App;
+use leptos::*;
 
 fn main() {
-    yew::Renderer::<App>::new().render();
+	mount_to_body(|cx| view! { cx, <App /> })
 }

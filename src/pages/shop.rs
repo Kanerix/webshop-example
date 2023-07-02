@@ -1,8 +1,8 @@
-use yew::prelude::*;
+use leptos::*;
 
-#[function_component(Shop)]
-pub fn shop() -> Html {
-	html! {
-		<h1>{ "Shop" }</h1>
+#[component]
+pub fn Shop(cx: Scope) -> impl IntoView {
+	view! { cx,
+		<h1>"Shop"</h1>
 	}
 }
