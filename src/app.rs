@@ -3,18 +3,21 @@ use leptos_router::*;
 
 use crate::{
 	components::navbar::Navbar,
-	pages::{home::Home, not_found::NotFound},
+	pages::{home::Home, not_found::NotFound, shop::Shop},
 };
 
 #[component]
 pub fn App(cx: Scope) -> impl IntoView {
 	view! { cx,
-		<Routes>
+		<Router>
 			<Navbar />
 			<main>
-				<Route path="/" view=|cx| view! { cx, <Home /> } />
-				<Route path="/*any" view=|cx| view! { cx, <NotFound /> } />
+				<Routes>
+					<Route path="/" view=Home />
+					<Route path="/shop/:product_id/view" view=Shop />
+					<Route path="/*any" view=NotFound />
+				</Routes>
 			</main>
-		</Routes>
+		</Router>
 	}
 }
