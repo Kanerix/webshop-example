@@ -1,6 +1,6 @@
 procs:
   trunk: "trunk serve"
-  tailwind: "npx tailwindcss -i ./input.css -o ./style/generated.css --watch"
+  tailwind: "npx tailwindcss -i ./style/tailwind.css -o ./style/generated.css --watch"
   fmt: 
     shell: "cargo fmt"
     autostart: false
