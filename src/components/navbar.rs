@@ -29,8 +29,8 @@ pub struct Item {
 impl IntoView for Kind {
 	fn into_view(self, cx: Scope) -> View {
 		match self {
-			Kind::Women => view! {cx, "Women" }.into_view(cx),
-			Kind::Men => view! {cx, "Men" }.into_view(cx),
+			Kind::Women => "Women".into_view(cx),
+			Kind::Men => "Men".into_view(cx),
 		}
 	}
 }
@@ -64,10 +64,13 @@ impl IntoView for Item {
 		};
 
 		view! { cx,
-			<div class="grid grid-cols-6 text-slate-600 border-b border-transparent
-			hover:border-slate-300 hover:cursor-pointer">
+			<div 
+				class="grid grid-cols-6 pt-3 pb-2 text-slate-600
+				border-b border-transparent
+				hover:border-slate-300 hover:cursor-pointer"
+			>
 				{icon()}
-				<div class="span-5 self-center justify-self-start my-2 text-xs font-bold">
+				<div class="col-span-4 self-center justify-self-start text-xs font-bold">
 					{self.name}
 				</div>
 			</div>
@@ -114,14 +117,64 @@ pub fn FlyoutButton(
 pub fn Navbar(cx: Scope) -> impl IntoView {
 	let women_flyout = Flyout {
 		kind: Kind::Women,
-		categories: vec![Category {
-			id: 100,
-			name: "Clothing".into(),
-			items: vec![Item {
-				icon: Some("fa-solid fa-shirt".into()),
-				name: "Shirts".into(),
-			}],
-		}],
+		categories: vec![
+			Category {
+				id: 100,
+				name: "Clothing".into(),
+				items: vec![
+					Item {
+						icon: Some("fa-solid fa-shirt".into()),
+						name: "T-shirts".into(),
+					},
+					Item {
+						icon: Some("fa-solid fa-shirt".into()),
+						name: "Dresses".into(),
+					},
+					Item {
+						icon: Some("fa-solid fa-shirt".into()),
+						name: "Cardigans".into(),
+					},
+					Item {
+						icon: Some("fa-solid fa-shirt".into()),
+						name: "Jeans".into(),
+					},
+					Item {
+						icon: Some("fa-solid fa-vest".into()),
+						name: "Vests".into(),
+					},
+					Item {
+						icon: Some("fa-solid fa-shirt".into()),
+						name: "Coats".into(),
+					},
+					Item {
+						icon: Some("fa-solid fa-shirt".into()),
+						name: "Skirts".into(),
+					},
+					Item {
+						icon: Some("fa-solid fa-socks".into()),
+						name: "Underwear".into(),
+					},
+				],
+			},
+			Category {
+				id: 101,
+				name: "Brands".into(),
+				items: vec![
+					Item {
+						icon: None,
+						name: "Nike".into(),
+					},
+					Item {
+						icon: None,
+						name: "Adidas".into(),
+					},
+					Item {
+						icon: None,
+						name: "Carhartt".into(),
+					},
+				],
+			},
+		],
 	};
 	let men_flyout = Flyout {
 		kind: Kind::Men,
@@ -179,6 +232,14 @@ pub fn Navbar(cx: Scope) -> impl IntoView {
 					Item {
 						icon: None,
 						name: "Carhartt".into(),
+					},
+					Item {
+						icon: None,
+						name: "Wood Wood".into(),
+					},
+					Item {
+						icon: None,
+						name: "Calvin Klein".into(),
 					},
 				],
 			},
