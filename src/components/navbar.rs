@@ -1,21 +1,16 @@
+use std::fmt::Display;
+
 use leptos::*;
 
-#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
-pub enum Kind {
-	Women,
-	Men,
-}
-
 #[derive(Debug, PartialEq, Eq, Hash, Clone)]
-pub struct Flyout {
-	pub kind: Kind,
-	pub categories: Vec<Category>,
+pub enum Flyout {
+	Women(Vec<Category>),
+	Men(Vec<Category>),
+	Solutions(Vec<Solution>),
 }
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone)]
 pub struct Category {
-	// TODO: Find better solution for rendering list with unique keys
-	pub id: u32,
 	pub name: String,
 	pub items: Vec<Item>,
 }
@@ -26,11 +21,39 @@ pub struct Item {
 	pub name: String,
 }
 
-impl IntoView for Kind {
+#[derive(Debug, PartialEq, Eq, Hash, Clone)]
+pub struct Solution {
+	pub icon: String,
+	pub name: String,
+	pub description: String,
+}
+
+impl Flyout {
+	fn get_button_view(&self, cx: Scope) -> View {
+		match self {
+			Self::Women(_) => "Women".into_view(cx),
+			Self::Men(_) => "Men".into_view(cx),
+			Self::Solutions(_) => "Solutions".into_view(cx),
+		}
+	}
+}
+
+impl Display for Flyout {
+	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+		match self {
+			Self::Women(_) => write!(f, "Women"),
+			Self::Men(_) => write!(f, "Men"),
+			Self::Solutions(_) => write!(f, "Solutions"),
+		}
+	}
+}
+
+impl IntoView for Flyout {
 	fn into_view(self, cx: Scope) -> View {
 		match self {
-			Kind::Women => "Women".into_view(cx),
-			Kind::Men => "Men".into_view(cx),
+			Flyout::Women(categories) => categories.into_view(cx),
+			Flyout::Men(categories) => categories.into_view(cx),
+			Flyout::Solutions(solutions) => solutions.into_view(cx),
 		}
 	}
 }
@@ -53,7 +76,7 @@ impl IntoView for Category {
 
 impl IntoView for Item {
 	fn into_view(self, cx: Scope) -> View {
-		let icon = move || {
+		let icon = || {
 			if let Some(icon) = self.icon {
 				Some(view! { cx,
 					<i class=format!("{icon} self-center justify-self-start text-xs text-slate-400")></i>
@@ -64,7 +87,7 @@ impl IntoView for Item {
 		};
 
 		view! { cx,
-			<div 
+			<div
 				class="grid grid-cols-6 pt-3 pb-2 text-slate-600
 				border-b border-transparent
 				hover:border-slate-300 hover:cursor-pointer"
@@ -79,6 +102,27 @@ impl IntoView for Item {
 	}
 }
 
+impl IntoView for Solution {
+	fn into_view(self, cx: Scope) -> View {
+		view! { cx,
+			<div class="group py-4 px-6 rounded-md cursor-pointer hover:bg-slate-100">
+				<div class="w-fit p-2 my-4 rounded-md text-left bg-slate-100 group-hover:bg-white">
+					<i class=format!("{} text-2xl text-slate-400 group-hover:text-purple-500", self.icon)></i>
+				</div>
+				<div class="my-2">
+					<div class="mb-2 text-sm text-left text-slate-800 font-bold">
+						{self.name}
+					</div>
+					<div class="text-xs text-left text-slate-600 leading-5">
+						{self.description}
+					</div>
+				</div>
+			</div>
+		}
+		.into_view(cx)
+	}
+}
+
 #[component]
 pub fn FlyoutButton(
 	cx: Scope,
@@ -86,9 +130,10 @@ pub fn FlyoutButton(
 	flyout_signal: RwSignal<Flyout>,
 	active: RwSignal<bool>,
 ) -> impl IntoView {
-	let button_header = flyout.kind.into_view(cx);
+	let flyout_kind = flyout.to_string();
+	let flyout_element = flyout.get_button_view(cx);
 	let active = Signal::derive(cx, move || {
-		if active() && flyout.kind == flyout_signal().kind {
+		if active() && flyout_kind == flyout_signal().to_string() {
 			true
 		} else {
 			false
@@ -100,7 +145,7 @@ pub fn FlyoutButton(
 			class=move || {
 				format!("py-4 mr-8 text-md font-medium border-b-2 {}",
 					if active() {
-						"border-purple-800 text-purple-800"
+						"border-purple-500 text-purple-500"
 					} else {
 						"border-transparent"
 					}
@@ -108,145 +153,157 @@ pub fn FlyoutButton(
 			}
 			on:mouseenter=move |_| flyout_signal.set(flyout.clone())
 		>
-			{button_header}
+			{flyout_element}
 		</div>
 	}
 }
 
 #[component]
 pub fn Navbar(cx: Scope) -> impl IntoView {
-	let women_flyout = Flyout {
-		kind: Kind::Women,
-		categories: vec![
-			Category {
-				id: 100,
-				name: "Clothing".into(),
-				items: vec![
-					Item {
-						icon: Some("fa-solid fa-shirt".into()),
-						name: "T-shirts".into(),
-					},
-					Item {
-						icon: Some("fa-solid fa-shirt".into()),
-						name: "Dresses".into(),
-					},
-					Item {
-						icon: Some("fa-solid fa-shirt".into()),
-						name: "Cardigans".into(),
-					},
-					Item {
-						icon: Some("fa-solid fa-shirt".into()),
-						name: "Jeans".into(),
-					},
-					Item {
-						icon: Some("fa-solid fa-vest".into()),
-						name: "Vests".into(),
-					},
-					Item {
-						icon: Some("fa-solid fa-shirt".into()),
-						name: "Coats".into(),
-					},
-					Item {
-						icon: Some("fa-solid fa-shirt".into()),
-						name: "Skirts".into(),
-					},
-					Item {
-						icon: Some("fa-solid fa-socks".into()),
-						name: "Underwear".into(),
-					},
-				],
-			},
-			Category {
-				id: 101,
-				name: "Brands".into(),
-				items: vec![
-					Item {
-						icon: None,
-						name: "Nike".into(),
-					},
-					Item {
-						icon: None,
-						name: "Adidas".into(),
-					},
-					Item {
-						icon: None,
-						name: "Carhartt".into(),
-					},
-				],
-			},
-		],
-	};
-	let men_flyout = Flyout {
-		kind: Kind::Men,
-		categories: vec![
-			Category {
-				id: 200,
-				name: "Clothing".into(),
-				items: vec![
-					Item {
-						icon: Some("fa-solid fa-shirt".into()),
-						name: "T-shirts".into(),
-					},
-					Item {
-						icon: Some("fa-solid fa-shirt".into()),
-						name: "Sweaters".into(),
-					},
-					Item {
-						icon: Some("fa-solid fa-shirt".into()),
-						name: "Hoodies".into(),
-					},
-					Item {
-						icon: Some("fa-solid fa-shirt".into()),
-						name: "Jeans".into(),
-					},
-					Item {
-						icon: Some("fa-solid fa-vest".into()),
-						name: "Vests".into(),
-					},
-					Item {
-						icon: Some("fa-solid fa-shirt".into()),
-						name: "Tracksuits".into(),
-					},
-					Item {
-						icon: Some("fa-solid fa-shirt".into()),
-						name: "Shorts".into(),
-					},
-					Item {
-						icon: Some("fa-solid fa-socks".into()),
-						name: "Underwear".into(),
-					},
-				],
-			},
-			Category {
-				id: 201,
-				name: "Brands".into(),
-				items: vec![
-					Item {
-						icon: None,
-						name: "Nike".into(),
-					},
-					Item {
-						icon: None,
-						name: "Adidas".into(),
-					},
-					Item {
-						icon: None,
-						name: "Carhartt".into(),
-					},
-					Item {
-						icon: None,
-						name: "Wood Wood".into(),
-					},
-					Item {
-						icon: None,
-						name: "Calvin Klein".into(),
-					},
-				],
-			},
-		],
-	};
+	let women_flyout = Flyout::Women(vec![
+		Category {
+			name: "Clothing".into(),
+			items: vec![
+				Item {
+					icon: Some("fa-solid fa-shirt".into()),
+					name: "T-shirts".into(),
+				},
+				Item {
+					icon: Some("fa-solid fa-shirt".into()),
+					name: "Dresses".into(),
+				},
+				Item {
+					icon: Some("fa-solid fa-shirt".into()),
+					name: "Cardigans".into(),
+				},
+				Item {
+					icon: Some("fa-solid fa-shirt".into()),
+					name: "Jeans".into(),
+				},
+				Item {
+					icon: Some("fa-solid fa-vest".into()),
+					name: "Vests".into(),
+				},
+				Item {
+					icon: Some("fa-solid fa-shirt".into()),
+					name: "Coats".into(),
+				},
+				Item {
+					icon: Some("fa-solid fa-shirt".into()),
+					name: "Skirts".into(),
+				},
+				Item {
+					icon: Some("fa-solid fa-socks".into()),
+					name: "Underwear".into(),
+				},
+			],
+		},
+		Category {
+			name: "Brands".into(),
+			items: vec![
+				Item {
+					icon: None,
+					name: "Nike".into(),
+				},
+				Item {
+					icon: None,
+					name: "Adidas".into(),
+				},
+				Item {
+					icon: None,
+					name: "Carhartt".into(),
+				},
+			],
+		},
+	]);
+	let men_flyout = Flyout::Men(vec![
+		Category {
+			name: "Clothing".into(),
+			items: vec![
+				Item {
+					icon: Some("fa-solid fa-shirt".into()),
+					name: "T-shirts".into(),
+				},
+				Item {
+					icon: Some("fa-solid fa-shirt".into()),
+					name: "Sweaters".into(),
+				},
+				Item {
+					icon: Some("fa-solid fa-shirt".into()),
+					name: "Hoodies".into(),
+				},
+				Item {
+					icon: Some("fa-solid fa-shirt".into()),
+					name: "Jeans".into(),
+				},
+				Item {
+					icon: Some("fa-solid fa-vest".into()),
+					name: "Vests".into(),
+				},
+				Item {
+					icon: Some("fa-solid fa-shirt".into()),
+					name: "Tracksuits".into(),
+				},
+				Item {
+					icon: Some("fa-solid fa-shirt".into()),
+					name: "Shorts".into(),
+				},
+				Item {
+					icon: Some("fa-solid fa-socks".into()),
+					name: "Underwear".into(),
+				},
+			],
+		},
+		Category {
+			name: "Brands".into(),
+			items: vec![
+				Item {
+					icon: None,
+					name: "Nike".into(),
+				},
+				Item {
+					icon: None,
+					name: "Adidas".into(),
+				},
+				Item {
+					icon: None,
+					name: "Carhartt".into(),
+				},
+				Item {
+					icon: None,
+					name: "Wood Wood".into(),
+				},
+				Item {
+					icon: None,
+					name: "Calvin Klein".into(),
+				},
+			],
+		},
+	]);
+	let solution_flyout = Flyout::Solutions(vec![
+		Solution {
+			icon: "fa-solid fa-truck-fast".into(),
+			name: "Shipping".into(),
+			description: "Learn everything about how our shipping solutions works for the best customer expericence.".into(),
+		},
+		Solution {
+			icon: "fa-solid fa-money-bill".into(),
+			name: "Pricing".into(),
+			description: "Find out how our pricing works and learn how you as a customer can impact the price of a product.".into(),
+		},
+		Solution {
+			icon: "fa-solid fa-chart-pie".into(),
+			name: "Analytics".into(),
+			description: "Learn how we found a solution improve our customer experince using collected data.".into(),
+		},
+		Solution {
+			icon: "fa-solid fa-address-book".into(),
+			name: "Contact".into(),
+			description: "If you have any problems you are always free to contact one of our emplyees.".into(),
+		},
+	]);
 
-	let show_flyout = create_rw_signal(cx, true);
+	let show_flyout = create_rw_signal(cx, false);
 	let flyout = create_rw_signal::<Flyout>(cx, women_flyout.clone());
 
 	let close_flyout = move |_| {
@@ -276,6 +333,11 @@ pub fn Navbar(cx: Scope) -> impl IntoView {
 							flyout_signal=flyout
 							active=show_flyout
 						/>
+						<FlyoutButton
+							flyout={solution_flyout}
+							flyout_signal=flyout
+							active=show_flyout
+						/>
 					</div>
 					<div class="place-self-center text-lg">
 						"Artilun"
@@ -287,11 +349,7 @@ pub fn Navbar(cx: Scope) -> impl IntoView {
 				<div class=move || if show_flyout() { "animate-appear" } else { "animate-disappear" }>
 					<div class="absolute mt-px px-32 w-full bg-white border-b border-b-slate-300">
 						<div class="grid grid-cols-4 gap-x-4 py-4">
-							<For
-								each=move || flyout().categories
-								key=|category| category.id
-								view=move |_, category: Category| category
-							/>
+							{move || flyout()}
 						</div>
 					</div>
 				</div>
