@@ -1,4 +1,5 @@
 use leptos::*;
+use leptos_meta::*;
 use leptos_router::*;
 
 use crate::{
@@ -8,7 +9,11 @@ use crate::{
 
 #[component]
 pub fn App(cx: Scope) -> impl IntoView {
+	provide_meta_context(cx);
+
 	view! { cx,
+		<Title text="Artilun Webshop" />
+		<Link rel="icon" type_="image/png" href="./assets/favicon.png" />
 		<Router>
 			<Navbar />
 			<main>

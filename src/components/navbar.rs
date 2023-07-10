@@ -6,7 +6,7 @@ use leptos::*;
 pub enum Flyout {
 	Women(Vec<Category>),
 	Men(Vec<Category>),
-	Solutions(Vec<Solution>),
+	About(Vec<Information>),
 }
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone)]
@@ -22,7 +22,7 @@ pub struct Item {
 }
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone)]
-pub struct Solution {
+pub struct Information {
 	pub icon: String,
 	pub name: String,
 	pub description: String,
@@ -33,7 +33,7 @@ impl Flyout {
 		match self {
 			Self::Women(_) => "Women".into_view(cx),
 			Self::Men(_) => "Men".into_view(cx),
-			Self::Solutions(_) => "Solutions".into_view(cx),
+			Self::About(_) => "About".into_view(cx),
 		}
 	}
 }
@@ -43,7 +43,7 @@ impl Display for Flyout {
 		match self {
 			Self::Women(_) => write!(f, "Women"),
 			Self::Men(_) => write!(f, "Men"),
-			Self::Solutions(_) => write!(f, "Solutions"),
+			Self::About(_) => write!(f, "About"),
 		}
 	}
 }
@@ -53,7 +53,7 @@ impl IntoView for Flyout {
 		match self {
 			Flyout::Women(categories) => categories.into_view(cx),
 			Flyout::Men(categories) => categories.into_view(cx),
-			Flyout::Solutions(solutions) => solutions.into_view(cx),
+			Flyout::About(information) => information.into_view(cx),
 		}
 	}
 }
@@ -65,9 +65,7 @@ impl IntoView for Category {
 				<div class="text-sm font-bold text-left text-slate-400">
 					{self.name}
 				</div>
-				<div class="py-2">
-					{self.items}
-				</div>
+				{self.items}
 			</div>
 		}
 		.into_view(cx)
@@ -79,7 +77,10 @@ impl IntoView for Item {
 		let icon = || {
 			if let Some(icon) = self.icon {
 				Some(view! { cx,
-					<i class=format!("{icon} self-center justify-self-start text-xs text-slate-400")></i>
+					<i class=
+						format!("{icon} self-center justify-self-start
+						text-xs text-slate-400 group-hover:text-purple-500")
+					/>
 				})
 			} else {
 				None
@@ -88,9 +89,9 @@ impl IntoView for Item {
 
 		view! { cx,
 			<div
-				class="grid grid-cols-6 pt-3 pb-2 text-slate-600
-				border-b border-transparent
-				hover:border-slate-300 hover:cursor-pointer"
+				class="group grid grid-cols-6 pt-3 pb-2 text-slate-600
+				bg-red-400 cursor-pointer rounded-md 
+				hover:bg-slate-900"
 			>
 				{icon()}
 				<div class="col-span-4 self-center justify-self-start text-xs font-bold">
@@ -102,7 +103,7 @@ impl IntoView for Item {
 	}
 }
 
-impl IntoView for Solution {
+impl IntoView for Information {
 	fn into_view(self, cx: Scope) -> View {
 		view! { cx,
 			<div class="group py-4 px-6 rounded-md cursor-pointer hover:bg-slate-100">
@@ -280,26 +281,26 @@ pub fn Navbar(cx: Scope) -> impl IntoView {
 			],
 		},
 	]);
-	let solution_flyout = Flyout::Solutions(vec![
-		Solution {
+	let about_flyout = Flyout::About(vec![
+		Information {
 			icon: "fa-solid fa-truck-fast".into(),
 			name: "Shipping".into(),
-			description: "Learn everything about how our shipping solutions works for the best customer expericence.".into(),
+			description: "Learn everything about how our shipping works and how we try to create the best customer expericence.".into(),
 		},
-		Solution {
+		Information {
 			icon: "fa-solid fa-money-bill".into(),
 			name: "Pricing".into(),
-			description: "Find out how our pricing works and learn how you as a customer can impact the price of a product.".into(),
+			description: "Find out how our pricing works and learn how you as a customer can earn discounts while shopping on our website.".into(),
 		},
-		Solution {
+		Information {
 			icon: "fa-solid fa-chart-pie".into(),
 			name: "Analytics".into(),
-			description: "Learn how we found a solution improve our customer experince using collected data.".into(),
+			description: "Learn what data we collect and how we use it to try and improve our customers experince on our webshop.".into(),
 		},
-		Solution {
-			icon: "fa-solid fa-address-book".into(),
-			name: "Contact".into(),
-			description: "If you have any problems you are always free to contact one of our emplyees.".into(),
+		Information {
+			icon: "fa-solid fa-headset".into(),
+			name: "Support".into(),
+			description: "Look through our customer service to see if we can solve an issue of yours or contact an employee.".into(),
 		},
 	]);
 
@@ -314,46 +315,44 @@ pub fn Navbar(cx: Scope) -> impl IntoView {
 	};
 
 	view! { cx,
-		<div on:mouseleave=close_flyout>
-			<nav class="text-center border-b border-b-slate-300">
-				<div class="px-32 py-2 flex justify-between w-full bg-slate-100">
-					<div class="text-xs font-bold text-slate-600">"ALL THE BEST BRANDS"</div>
-					<div class="text-xs font-bold text-slate-600">"FREE SHIPPING FOR ORDERS OVER 50$"</div>
-					<div class="text-xs font-bold text-slate-600">"30 DAYS RIGHT OF RETURN"</div>
+		<nav on:mouseleave=close_flyout class="text-center border-b border-b-slate-300">
+			<div class="px-32 py-2 flex justify-between w-full bg-slate-100">
+				<div class="text-xs font-bold text-slate-600">"ALL THE BEST BRANDS"</div>
+				<div class="text-xs font-bold text-slate-600">"FREE SHIPPING FOR ORDERS OVER 50$"</div>
+				<div class="text-xs font-bold text-slate-600">"30 DAYS RIGHT OF RETURN"</div>
+			</div>
+			<div class="grid grid-cols-3 px-32">
+				<div class="flex w-fit" on:mouseenter=open_flyout>
+					<FlyoutButton
+						flyout={women_flyout}
+						flyout_signal=flyout
+						active=show_flyout
+					/>
+					<FlyoutButton
+						flyout={men_flyout}
+						flyout_signal=flyout
+						active=show_flyout
+					/>
+					<FlyoutButton
+						flyout={about_flyout}
+						flyout_signal=flyout
+						active=show_flyout
+					/>
 				</div>
-				<div class="grid grid-cols-3 px-32">
-					<div class="flex w-fit" on:mouseenter=open_flyout>
-						<FlyoutButton
-							flyout={women_flyout}
-							flyout_signal=flyout
-							active=show_flyout
-						/>
-						<FlyoutButton
-							flyout={men_flyout}
-							flyout_signal=flyout
-							active=show_flyout
-						/>
-						<FlyoutButton
-							flyout={solution_flyout}
-							flyout_signal=flyout
-							active=show_flyout
-						/>
-					</div>
-					<div class="place-self-center text-lg">
-						"Artilun"
-					</div>
-					<div class="justify-self-end self-center">
-						<i class="fa-solid fa-shopping-cart text-slate-400 text-2xl"></i>
-					</div>
+				<div class="place-self-center text-lg">
+					<img src="assets/full-logo.svg" class="img w-28" />
 				</div>
-				<div class=move || if show_flyout() { "animate-appear" } else { "animate-disappear" }>
-					<div class="absolute mt-px px-32 w-full bg-white border-b border-b-slate-300">
-						<div class="grid grid-cols-4 gap-x-4 py-4">
-							{move || flyout()}
-						</div>
+				<div class="justify-self-end self-center">
+					<i class="fa-solid fa-shopping-cart text-slate-400 text-2xl"></i>
+				</div>
+			</div>
+			<div class=move || if show_flyout() { "animate-appear" } else { "animate-disappear" }>
+				<div class="absolute mt-px px-32 w-full bg-white border-b border-b-slate-300">
+					<div class="grid grid-cols-4 gap-x-4 py-4">
+						{move || flyout()}
 					</div>
 				</div>
-			</nav>
-		</div>
+			</div>
+		</nav>
 	}
 }

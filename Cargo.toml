@@ -14,4 +14,5 @@ console_error_panic_hook = "0.1.7"
 console_log = { version = "1.0.0", features = ["color"] }
 leptos = {git = "https://github.com/leptos-rs/leptos", default-features = false, features = ["csr", "nightly"] }
 leptos_router = { git = "https://github.com/leptos-rs/leptos", default-features = false, features = ["csr", "nightly"] }
+leptos_meta = { git = "https://github.com/leptos-rs/leptos", default-features = false, features = ["csr", "nightly"] }
 log = "0.4.19"
