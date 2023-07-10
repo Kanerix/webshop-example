@@ -65,7 +65,9 @@ impl IntoView for Category {
 				<div class="text-sm font-bold text-left text-slate-400">
 					{self.name}
 				</div>
-				{self.items}
+				<div class="my-2">
+					{self.items}
+				</div>
 			</div>
 		}
 		.into_view(cx)
@@ -77,10 +79,14 @@ impl IntoView for Item {
 		let icon = || {
 			if let Some(icon) = self.icon {
 				Some(view! { cx,
-					<i class=
-						format!("{icon} self-center justify-self-start
-						text-xs text-slate-400 group-hover:text-purple-500")
-					/>
+					<div class="grid w-6 h-6 bg-white rounded-md">
+						<i
+							class=format!("{icon}
+							place-self-center
+							text-xs text-slate-400
+							group-hover:text-purple-500")
+						/>
+					</div>
 				})
 			} else {
 				None
@@ -89,9 +95,10 @@ impl IntoView for Item {
 
 		view! { cx,
 			<div
-				class="group grid grid-cols-6 pt-3 pb-2 text-slate-600
-				bg-red-400 cursor-pointer rounded-md 
-				hover:bg-slate-900"
+				class="group grid grid-cols-6 py-2 text-slate-600
+				transition-all ease-in-out duration-200
+				cursor-pointer rounded-md 
+				hover:bg-slate-200 hover:pl-2"
 			>
 				{icon()}
 				<div class="col-span-4 self-center justify-self-start text-xs font-bold">
@@ -106,9 +113,23 @@ impl IntoView for Item {
 impl IntoView for Information {
 	fn into_view(self, cx: Scope) -> View {
 		view! { cx,
-			<div class="group py-4 px-6 rounded-md cursor-pointer hover:bg-slate-100">
-				<div class="w-fit p-2 my-4 rounded-md text-left bg-slate-100 group-hover:bg-white">
-					<i class=format!("{} text-2xl text-slate-400 group-hover:text-purple-500", self.icon)></i>
+			<div
+				class="group py-4 px-6 rounded-md cursor-pointer
+				transition-colors ease-in-out duration-200
+				hover:bg-slate-100"
+			>
+				<div
+					class="w-fit p-2 my-4 rounded-md text-left bg-slate-100 
+					transition-colors ease-in-out duration-200
+					group-hover:bg-white"
+				>
+					<i
+						class=format!("{}
+						text-2xl text-slate-400 
+						transition-colors ease-in-out duration-200
+						group-hover:text-purple-500",
+						self.icon) 
+					/>
 				</div>
 				<div class="my-2">
 					<div class="mb-2 text-sm text-left text-slate-800 font-bold">
@@ -166,37 +187,30 @@ pub fn Navbar(cx: Scope) -> impl IntoView {
 			name: "Clothing".into(),
 			items: vec![
 				Item {
-					icon: Some("fa-solid fa-shirt".into()),
-					name: "T-shirts".into(),
-				},
-				Item {
-					icon: Some("fa-solid fa-shirt".into()),
-					name: "Dresses".into(),
-				},
-				Item {
-					icon: Some("fa-solid fa-shirt".into()),
-					name: "Cardigans".into(),
-				},
-				Item {
-					icon: Some("fa-solid fa-shirt".into()),
-					name: "Jeans".into(),
-				},
-				Item {
 					icon: Some("fa-solid fa-vest".into()),
 					name: "Vests".into(),
 				},
 				Item {
 					icon: Some("fa-solid fa-shirt".into()),
-					name: "Coats".into(),
+					name: "T-shirts".into(),
 				},
 				Item {
-					icon: Some("fa-solid fa-shirt".into()),
-					name: "Skirts".into(),
+					icon: Some("fa-solid fa-mitten".into()),
+					name: "Gloves".into(),
 				},
 				Item {
 					icon: Some("fa-solid fa-socks".into()),
 					name: "Underwear".into(),
 				},
+				Item {
+					icon: Some("fa-solid fa-glasses".into()),
+					name: "Accessories".into(),
+				},
+				Item {
+					icon: Some("fa-solid fa-hat-wizard".into()),
+					name: "Costumes".into(),
+				},
+
 			],
 		},
 		Category {
@@ -204,15 +218,23 @@ pub fn Navbar(cx: Scope) -> impl IntoView {
 			items: vec![
 				Item {
 					icon: None,
-					name: "Nike".into(),
+					name: "Zara".into(),
 				},
 				Item {
 					icon: None,
-					name: "Adidas".into(),
+					name: "H&M".into(),
 				},
 				Item {
 					icon: None,
-					name: "Carhartt".into(),
+					name: "Forever 21".into(),
+				},
+				Item {
+					icon: None,
+					name: "Prada".into(),
+				},
+				Item {
+					icon: None,
+					name: "Chanel".into(),
 				},
 			],
 		},
@@ -222,36 +244,28 @@ pub fn Navbar(cx: Scope) -> impl IntoView {
 			name: "Clothing".into(),
 			items: vec![
 				Item {
-					icon: Some("fa-solid fa-shirt".into()),
-					name: "T-shirts".into(),
-				},
-				Item {
-					icon: Some("fa-solid fa-shirt".into()),
-					name: "Sweaters".into(),
-				},
-				Item {
-					icon: Some("fa-solid fa-shirt".into()),
-					name: "Hoodies".into(),
-				},
-				Item {
-					icon: Some("fa-solid fa-shirt".into()),
-					name: "Jeans".into(),
-				},
-				Item {
 					icon: Some("fa-solid fa-vest".into()),
 					name: "Vests".into(),
 				},
 				Item {
 					icon: Some("fa-solid fa-shirt".into()),
-					name: "Tracksuits".into(),
+					name: "T-shirts".into(),
 				},
 				Item {
-					icon: Some("fa-solid fa-shirt".into()),
-					name: "Shorts".into(),
+					icon: Some("fa-solid fa-user-tie".into()),
+					name: "Suits".into(),
 				},
 				Item {
 					icon: Some("fa-solid fa-socks".into()),
 					name: "Underwear".into(),
+				},
+				Item {
+					icon: Some("fa-solid fa-glasses".into()),
+					name: "Accessories".into(),
+				},
+				Item {
+					icon: Some("fa-solid fa-crown".into()),
+					name: "Costumes".into(),
 				},
 			],
 		},
@@ -277,6 +291,10 @@ pub fn Navbar(cx: Scope) -> impl IntoView {
 				Item {
 					icon: None,
 					name: "Calvin Klein".into(),
+				},
+				Item {
+					icon: None,
+					name: "Off-White".into(),
 				},
 			],
 		},
@@ -340,7 +358,7 @@ pub fn Navbar(cx: Scope) -> impl IntoView {
 					/>
 				</div>
 				<div class="place-self-center text-lg">
-					<img src="assets/full-logo.svg" class="img w-28" />
+					<img src="assets/full-logo.svg" class="w-28" />
 				</div>
 				<div class="justify-self-end self-center">
 					<i class="fa-solid fa-shopping-cart text-slate-400 text-2xl"></i>
