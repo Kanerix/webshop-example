@@ -1,7 +1,10 @@
 use leptos::*;
 use leptos_router::A;
 
-use crate::context::cart::{ShoppingCart, CartItem};
+use crate::{
+	context::cart::{ShoppingCart, CartItem},
+	components::debug::Debug,
+};
 
 #[component]
 pub fn NotFound(cx: Scope) -> impl IntoView {
@@ -15,6 +18,7 @@ pub fn NotFound(cx: Scope) -> impl IntoView {
 			});
 		});
 	};
+
 
 	view! { cx,
 		<div class="px-64 py-8 bg-red-500 text-white">
@@ -30,11 +34,17 @@ pub fn NotFound(cx: Scope) -> impl IntoView {
 				</A>
 			</div>
 			// Test button for shopping cart
-			<div class="flex justify-center items-center mt-16">
-				<button on:click=add_item class="mt-2 p-2 rounded-md bg-slate-800">
-					"Cart"
-				</button>
-			</div>
+			<Debug>
+				<div class="flex justify-center items-center mt-32">
+					<button
+						class="px-4 py-2 rounded-md bg-slate-800
+						text-center text-md font-semibold" 
+						on:click=add_item
+					>
+						"Add item to cart"
+					</button>
+				</div>
+			</Debug>
 		</div>
 	}
 }
