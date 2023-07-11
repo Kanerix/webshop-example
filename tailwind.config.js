@@ -10,7 +10,7 @@ module.exports = {
 				},
 				disappear: {
 					'0%': { transform: 'translateY(0px);', opacity: '1;' },
-					'100%': { transform: 'translateY(0.25rem);', opacity: '0;' },
+					'100%': { transform: 'translateY(0.25rem);', opacity: '0;', visibility: 'hidden' },
 				},
 			},
 			animation: {
