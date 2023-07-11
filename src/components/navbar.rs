@@ -1,7 +1,7 @@
 use std::fmt::Display;
 
 use leptos::*;
-use leptos_router::A;
+use leptos_router::*;
 
 use crate::context::cart::ShoppingCart;
 
@@ -79,7 +79,7 @@ impl IntoView for Category {
 
 impl IntoView for Item {
 	fn into_view(self, cx: Scope) -> View {
-		let icon = || {
+		let icon = move || {
 			if let Some(icon) = self.icon {
 				Some(view! { cx,
 					<div class="grid w-6 h-6 bg-white rounded-md">
@@ -97,7 +97,8 @@ impl IntoView for Item {
 		};
 
 		view! { cx,
-			<div
+			<A
+				href=format!("/shop?filter={}", self.name.to_lowercase())
 				class="group grid grid-cols-6 py-2 text-slate-600
 				transition-all ease-in-out duration-200
 				cursor-pointer rounded-md 
@@ -107,7 +108,7 @@ impl IntoView for Item {
 				<div class="col-span-4 self-center justify-self-start text-xs font-bold">
 					{self.name}
 				</div>
-			</div>
+			</A>
 		}
 		.into_view(cx)
 	}
@@ -155,26 +156,27 @@ pub fn FlyoutButton(
 ) -> impl IntoView {
 	let flyout_kind = flyout.to_string();
 	let flyout_element = flyout.get_button_view(cx);
-	let active = Signal::derive(cx, move || {
-		if active() && flyout_kind == flyout_signal().to_string() {
-			true
-		} else {
-			false
-		}
+
+	let current_is_active = Signal::derive(cx, move || {
+		active() && flyout_kind == flyout_signal().to_string()
 	});
+
+	let set_flyout = move |_| {
+		flyout_signal.set(flyout.clone());
+	};
 
 	view! { cx,
 		<div
+			on:mouseenter=set_flyout
 			class=move || {
 				format!("py-4 mr-8 text-md font-medium border-b-2 {}",
-					if active() {
+					if current_is_active() {
 						"border-blue-600 text-blue-600"
 					} else {
 						"border-transparent"
 					}
 				)
 			}
-			on:mouseenter=move |_| flyout_signal.set(flyout.clone())
 		>
 			{flyout_element}
 		</div>
@@ -336,20 +338,24 @@ pub fn Navbar(cx: Scope) -> impl IntoView {
 
 	let get_cart_icon = move || {
 		let cart = cart();
-		if cart.len() < 10 {
-			cart.len().to_string()
-		} else {
-			"9+".into()
+		match cart.len() < 10 {
+			true => cart.len().to_string(),
+			false => "9+".into(),
 		}
 	};
 
 	let flyout_animation_class = move || {
-		if show_flyout() {
-			"animate-appear"
-		} else {
-			"animate-disappear"
+		match show_flyout() {
+			true => "animate-appear",
+			false => "animate-disappear",
 		}
 	};
+
+	let location = use_location(cx);
+	create_effect(cx, move |_| {
+		location.state.track();
+		show_flyout.set(false);
+	});
 
 	view! { cx,
 		<nav on:mouseleave=close_flyout class="text-center border-b border-b-slate-300">
