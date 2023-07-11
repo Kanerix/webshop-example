@@ -1,6 +1,7 @@
 use std::fmt::Display;
 
 use leptos::*;
+use leptos_router::A;
 
 use crate::context::cart::ShoppingCart;
 
@@ -126,11 +127,9 @@ impl IntoView for Information {
 					group-hover:bg-white"
 				>
 					<i
-						class=format!("{}
-						text-2xl text-slate-400 
+						class=format!("{} text-2xl text-slate-400
 						transition-colors ease-in-out duration-200
-						group-hover:text-blue-600",
-						self.icon)
+						group-hover:text-blue-600", self.icon)
 					/>
 				</div>
 				<div class="my-2">
@@ -335,6 +334,23 @@ pub fn Navbar(cx: Scope) -> impl IntoView {
 		show_flyout.set(true);
 	};
 
+	let get_cart_icon = move || {
+		let cart = cart();
+		if cart.len() < 10 {
+			cart.len().to_string()
+		} else {
+			"9+".into()
+		}
+	};
+
+	let flyout_animation_class = move || {
+		if show_flyout() {
+			"animate-appear"
+		} else {
+			"animate-disappear"
+		}
+	};
+
 	view! { cx,
 		<nav on:mouseleave=close_flyout class="text-center border-b border-b-slate-300">
 			<div class="px-32 py-2 flex justify-between w-full bg-slate-100">
@@ -361,24 +377,33 @@ pub fn Navbar(cx: Scope) -> impl IntoView {
 					/>
 				</div>
 				<div class="place-self-center text-lg">
-					<img src="assets/full-logo.svg" class="w-28" />
+					<A href="/">
+						<img src="assets/full-logo.svg" class="w-28" />
+					</A>
 				</div>
 				<div class="justify-self-end self-center">
-					<div class="relative">
-						<span class="absolute top-0 right-0 translate-x-2/4 -translate-y-2/4	
-						flex justify-center items-center rounded-full h-5 w-5 
-						bg-blue-500 text-xs text-white font-medium">
-							{move || if cart.get().len() < 10 {
-								cart().len().to_string()
-							} else {
-								"9+".to_string()
-							}}
-						</span>
-						<i class="fa-solid fa-shopping-cart text-slate-400 text-2xl"></i>
-					</div>
+					<A href="/cart">
+						<div class="group relative transition-colors rounded-full cursor-pointer">
+							<span
+								class="absolute top-0 right-0 translate-x-2/4 -translate-y-2/4
+								flex justify-center items-center rounded-full h-5 w-5 
+								bg-blue-500 text-xs text-white font-medium
+								transition-color ease-in-out duration-200
+								group-hover:bg-slate-300 group-hover:text-slate-900"
+							>
+								{move || get_cart_icon()}
+							</span>
+							<i
+								class="fa-solid fa-shopping-cart m-auto
+								text-slate-400 text-2xl
+								transition-color ease-in-out duration-200
+								group-hover:text-blue-500"
+							/>
+						</div>
+					</A>
 				</div>
 			</div>
-			<div class=move || if show_flyout() { "animate-appear" } else { "animate-disappear" }>
+			<div class=flyout_animation_class>
 				<div class="absolute mt-px px-32 w-full bg-white border-b border-b-slate-300">
 					<div class="grid grid-cols-4 gap-x-4 py-4">
 						{move || flyout()}

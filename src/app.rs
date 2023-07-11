@@ -21,7 +21,7 @@ pub fn App(cx: Scope) -> impl IntoView {
 				<main>
 					<Routes>
 						<Route path="/" view=Home />
-						<Route path="/shop/:product_id/view" view=Shop />
+						<Route path="/shop" view=Shop />
 						<Route path="/checkout" view=Checkout />
 						<Route path="/*any" view=NotFound />
 					</Routes>
