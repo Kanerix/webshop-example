@@ -2,6 +2,8 @@ use std::fmt::Display;
 
 use leptos::*;
 
+use crate::context::cart::ShoppingCart;
+
 #[derive(Debug, PartialEq, Eq, Hash, Clone)]
 pub enum Flyout {
 	Women(Vec<Category>),
@@ -84,7 +86,7 @@ impl IntoView for Item {
 							class=format!("{icon}
 							place-self-center
 							text-xs text-slate-400
-							group-hover:text-purple-500")
+							group-hover:text-blue-600")
 						/>
 					</div>
 				})
@@ -119,7 +121,7 @@ impl IntoView for Information {
 				hover:bg-slate-100"
 			>
 				<div
-					class="w-fit p-2 my-4 rounded-md text-left bg-slate-100 
+					class="w-fit p-2 my-4 rounded-md text-left bg-slate-100
 					transition-colors ease-in-out duration-200
 					group-hover:bg-white"
 				>
@@ -127,8 +129,8 @@ impl IntoView for Information {
 						class=format!("{}
 						text-2xl text-slate-400 
 						transition-colors ease-in-out duration-200
-						group-hover:text-purple-500",
-						self.icon) 
+						group-hover:text-blue-600",
+						self.icon)
 					/>
 				</div>
 				<div class="my-2">
@@ -167,7 +169,7 @@ pub fn FlyoutButton(
 			class=move || {
 				format!("py-4 mr-8 text-md font-medium border-b-2 {}",
 					if active() {
-						"border-purple-500 text-purple-500"
+						"border-blue-600 text-blue-600"
 					} else {
 						"border-transparent"
 					}
@@ -210,7 +212,6 @@ pub fn Navbar(cx: Scope) -> impl IntoView {
 					icon: Some("fa-solid fa-hat-wizard".into()),
 					name: "Costumes".into(),
 				},
-
 			],
 		},
 		Category {
@@ -322,6 +323,8 @@ pub fn Navbar(cx: Scope) -> impl IntoView {
 		},
 	]);
 
+	let cart = use_context::<ShoppingCart>(cx).unwrap().0;
+
 	let show_flyout = create_rw_signal(cx, false);
 	let flyout = create_rw_signal::<Flyout>(cx, women_flyout.clone());
 
@@ -361,7 +364,18 @@ pub fn Navbar(cx: Scope) -> impl IntoView {
 					<img src="assets/full-logo.svg" class="w-28" />
 				</div>
 				<div class="justify-self-end self-center">
-					<i class="fa-solid fa-shopping-cart text-slate-400 text-2xl"></i>
+					<div class="relative">
+						<span class="absolute top-0 right-0 translate-x-2/4 -translate-y-2/4	
+						flex justify-center items-center rounded-full h-5 w-5 
+						bg-blue-500 text-xs text-white font-medium">
+							{move || if cart.get().len() < 10 {
+								cart().len().to_string()
+							} else {
+								"9+".to_string()
+							}}
+						</span>
+						<i class="fa-solid fa-shopping-cart text-slate-400 text-2xl"></i>
+					</div>
 				</div>
 			</div>
 			<div class=move || if show_flyout() { "animate-appear" } else { "animate-disappear" }>
