@@ -21,7 +21,11 @@ pub fn NotFound(cx: Scope) -> impl IntoView {
 			<h1 class="text-center text-xl font-bold">"404"</h1>
 			<p class="text-center text-xl">"Page not found"</p>
 			<div class="flex justify-center items-center mt-16">
-				<A class="px-4 py-2 rounded-md bg-slate-800 text-center text-md font-semibold" href="/">
+				<A
+					href="/"
+					class="px-4 py-2 rounded-md bg-slate-800
+					text-center text-md font-semibold" 
+				>
 					"BACK HOME"
 				</A>
 			</div>
