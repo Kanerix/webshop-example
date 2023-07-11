@@ -313,7 +313,7 @@ pub fn Navbar(cx: Scope) -> impl IntoView {
 		Information {
 			icon: "fa-solid fa-chart-pie".into(),
 			name: "Analytics".into(),
-			description: "Learn what data we collect and how we use it to try and improve our customers experince on our webshop.".into(),
+			description: "Learn what data we collect and how we use it to try and improve our customer experince on our webshop.".into(),
 		},
 		Information {
 			icon: "fa-solid fa-headset".into(),
