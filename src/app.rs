@@ -13,7 +13,7 @@ pub fn App(cx: Scope) -> impl IntoView {
 	provide_meta_context(cx);
 
 	view! { cx,
-		<Title text="Artilun Webshop" />
+		<Title text="Webshop Example" />
 		<Link rel="icon" type_="image/png" href="./assets/favicon.png" />
 		<CartProvider>
 			<Router>
